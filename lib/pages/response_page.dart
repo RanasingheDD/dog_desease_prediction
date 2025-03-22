@@ -32,7 +32,7 @@ class _ResponsePageState extends State<ResponsePage> {
     try {
       final dogData = Provider.of<DogData>(context, listen: false);
       final prompt =
-          "My dog is a ${dogData.breed}, ${dogData.age} years old, and ${dogData.gender}. My dog has these symptoms: ${_controller.text}. What are the possible diseases? summerize 100 words";
+          "My dog is a ${dogData.breed}, ${dogData.age} years old, and ${dogData.gender}. My dog has these symptoms: ${_controller.text}. What are the possible diseases? give only most 2 desease and treatment for it. summerize 50 words";
 
       final response = await fetchOpenRouterResponse(prompt);
       setState(() {
@@ -88,45 +88,87 @@ class _ResponsePageState extends State<ResponsePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Response Page'),
+        title: const Text(
+          'Dog Diagnosis',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Consumer<DogData>(
             builder: (context, value, child) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Breed: ${dogData.breed}"),
-                  Text("Age: ${dogData.age}"),
-                  Text("Gender: ${dogData.gender}"),
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("🐶 Breed: ${dogData.breed}",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          Text("📆 Age: ${dogData.age} years",
+                              style: TextStyle(fontSize: 18)),
+                          Text("⚧ Gender: ${dogData.gender}",
+                              style: TextStyle(fontSize: 18)),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Enter Symptoms',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: Icon(Icons.sick, color: Colors.red),
                     ),
                   ),
                   const SizedBox(height: 20),
                   _isLoading
                       ? const CircularProgressIndicator()
                       : BUTTON(
-                          bg_color: Colors.blue,
-                          fg_color: Colors.white,
-                          title: 'Response',
-                          onPressed: _fetchResponse,
-                        ),
+                      bg_color: Colors.blue,
+                      fg_color: Colors.white,
+                      title: '🔍 Get Diagnosis',
+                      onPressed: () {
+                        if (_controller.text.isNotEmpty) {
+                          _fetchResponse();
+                        } else {
+                          // Optionally show a message if the text field is empty
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please enter symptoms'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+
                   const SizedBox(height: 20),
                   if (_apiResponse.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
                       child: Text(
-                        _apiResponse,
-                        style: const TextStyle(fontSize: 16),
+                        _apiResponse.replaceAll(RegExp(r'[^\w\s.,]'), ''), // Removes special characters
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
                       ),
                     ),
+                  ),
                 ],
               );
             },

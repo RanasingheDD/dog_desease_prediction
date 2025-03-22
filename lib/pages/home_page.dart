@@ -16,10 +16,26 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
   final List<Map<String, String>> _products = [
-    {'title': 'Pet Food', 'description': 'Feed your dog \nquality food', 'image': 'assets/5.png'},
-    {'title': 'Pet Toy', 'description': 'Take your dog \nfor regular \nwalks and play', 'image': 'assets/3.png'},
-    {'title': 'Pet Shampoo', 'description': 'Take your dog \nto the vet \nfor check-ups', 'image': 'assets/4.png'},
-    {'title': 'Pet Bed', 'description': 'Spend quality time \nwith your dog', 'image': 'assets/2.png'},
+    {
+      'title': 'Pet Food',
+      'description': 'Feed your dog \nquality food',
+      'image': 'assets/5.png'
+    },
+    {
+      'title': 'Pet Toy',
+      'description': 'Take your dog \nfor regular \nwalks and play',
+      'image': 'assets/3.png'
+    },
+    {
+      'title': 'Pet Shampoo',
+      'description': 'Take your dog \nto the vet \nfor check-ups',
+      'image': 'assets/4.png'
+    },
+    {
+      'title': 'Pet Bed',
+      'description': 'Spend quality time \nwith your dog',
+      'image': 'assets/2.png'
+    },
   ];
 
   String? selectedBreed;
@@ -29,7 +45,8 @@ class _HomePageState extends State<HomePage> {
   // Function to automatically scroll horizontally
   void _autoScroll() {
     Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         // If reached end, reset to the beginning
         _scrollController.jumpTo(0);
       } else {
@@ -52,147 +69,201 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text(
-          'Welcome to the Pet Care Shop',
-          style: TextStyle(fontSize: 15),
+          '🐾 Welcome to the Dog Care 🐾',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
+        backgroundColor:
+            Colors.blueAccent.withOpacity(0.7), // Transparent AppBar
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            // Product card scroll
-            SizedBox(
-              height: screenHeight * 0.35,  // Height of the product card container
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal, // Horizontal list
-                controller: _scrollController,
-                itemCount: _products.length,
-                itemBuilder: (context, index) {
-                  final product = _products[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Container(
-                        width: 180,
-                        height: 250,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                            image: AssetImage(product['image']!), // Add product image path
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
+        children: [
+          // Background Image
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.2, // Adjust transparency
+              child: Image.asset(
+                'assets/3.png', // Change to your image path
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                      height:
+                          screenHeight * 0.08), // Space for transparent AppBar
+
+                  // Product Card Scroll
+                  SizedBox(
+                    height: screenHeight * 0.35,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      controller: _scrollController,
+                      itemCount: _products.length,
+                      itemBuilder: (context, index) {
+                        final product = _products[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Stack(
                               children: [
-                                SizedBox(height: screenHeight * 0.05),
-                                Text(
-                                  product['description']!,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                Container(
+                                  width: 180,
+                                  height: 250,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: DecorationImage(
+                                      image: AssetImage(product['image']!),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: const BorderRadius.vertical(
+                                          bottom: Radius.circular(15)),
+                                    ),
+                                    child: Text(
+                                      product['description']!,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+
+                  SizedBox(height: screenHeight * 0.05),
+
+                  // Dog Breed Selection Dropdown
+                  const DROPDOWN(),
+
+                  SizedBox(height: screenHeight * 0.05),
+
+                  // Dog Age Input
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Enter Dog Age (Years)',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: const Icon(Icons.cake, color: Colors.blue),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        dogAge = int.tryParse(value);
+                      });
+                    },
+                  ),
+
+                  SizedBox(height: screenHeight * 0.03),
+
+                  // Dog Gender Selection
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Gender:',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'Male',
+                            groupValue: dogGender,
+                            onChanged: (String? value) {
+                              setState(() {
+                                dogGender = value;
+                              });
+                            },
+                          ),
+                          const Text('Male', style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'Female',
+                            groupValue: dogGender,
+                            onChanged: (String? value) {
+                              setState(() {
+                                dogGender = value;
+                              });
+                            },
+                          ),
+                          const Text('Female', style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: screenHeight * 0.05),
+
+                  // Next Button
+                  SizedBox(
+                    width: screenWidth * 0.6,
+                    child: BUTTON(
+                        bg_color: Colors.blueAccent,
+                        fg_color: Colors.white,
+                        title: 'Next ➡',
+                        onPressed: () {
+                          if (dogAge != null && dogGender != null) {
+                            // If both age and gender are valid, get dog data and navigate
+                            Provider.of<DogData>(context, listen: false)
+                                .getDogData(dogAge, dogGender);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ResponsePage()),
+                            );
+                          } else {
+                            // If any of the fields is null, show an error message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Please fill in all fields'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }),
+                  ),
+                ],
               ),
             ),
-
-             SizedBox(height: screenHeight * 0.05),
-
-            // Dog Breed Selection Dropdown
-            const DROPDOWN(),
-
-             SizedBox(height: screenHeight * 0.05),
-
-            // Dog Age Input
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Enter Dog Age (Years)',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  dogAge = int.tryParse(value);
-                });
-              },
-            ),
-
-             SizedBox(height: screenHeight * 0.03),
-
-            // Dog Gender Selection
-            Row(
-              children: [
-                const Text('Gender:'),
-                Radio<String>(
-                  value: 'Male',
-                  groupValue: dogGender,
-                  onChanged: (String? value) {
-                    setState(() {
-                      dogGender = value;
-                    });
-                  },
-                ),
-                const Text('Male'),
-                Radio<String>(
-                  value: 'Female',
-                  groupValue: dogGender,
-                  onChanged: (String? value) {
-                    setState(() {
-                      dogGender = value;
-                    });
-                  },
-                ),
-                const Text('Female'),
-              ],
-            ),
-
-            SizedBox(height: screenHeight * 0.05),
-            SizedBox(
-              height: screenWidth * 0.14,
-              child: BUTTON(
-              bg_color: Colors.blue, 
-              fg_color: Colors.white, 
-              title: 'Next ➡', 
-              onPressed: (){
-                // When you update the data
-              Provider.of<DogData>(context, listen: false).
-              getDogData(dogAge, dogGender);
-                Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ResponsePage(),
-                ),
-              );
-
-              }
-              ),
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
